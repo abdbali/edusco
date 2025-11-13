@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List
 
 class PronounResolver:
     def __init__(self):
@@ -8,7 +8,6 @@ class PronounResolver:
         resolved = []
         for t in tokens:
             if t.lower() in ["o", "bu", "şu", "onlar"]:
-                # Basit çözüm: önceki özneyi kullan
                 resolved.append(self.last_subject if self.last_subject else t)
             else:
                 resolved.append(t)
