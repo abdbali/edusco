@@ -1,15 +1,7 @@
+
 class RubricEvaluator:
-    """
-    Değerlendirme skoruna göre seviye, nitelik ve etiket belirler.
-    """
     def __init__(self):
-        self.levels = {
-            0: (0.0, 0.2),
-            1: (0.2, 0.4),
-            2: (0.4, 0.6),
-            3: (0.6, 0.8),
-            4: (0.8, 1.0)
-        }
+        self.levels = {0: (0, 0.2), 1: (0.2, 0.4), 2: (0.4, 0.6), 3: (0.6, 0.8), 4: (0.8, 1)}
         self.aciklama = {
             0: "Yanlış veya alakasız cevap.",
             1: "Kısmen doğru ama eksik veya yüzeysel ifade.",
@@ -26,7 +18,7 @@ class RubricEvaluator:
         }
 
     def evaluate(self, skor: float) -> dict:
-        skor = max(0, min(skor, 1))  # 0-1 aralığına sınırla
+        skor = max(0, min(skor, 1))  
         for seviye, (alt, ust) in self.levels.items():
             if alt <= skor <= ust:
                 break
@@ -39,23 +31,22 @@ class RubricEvaluator:
 
 
 def degerlendir(cevap: str) -> dict:
-
-
+    # Basit anahtar kelime tabanlı skor
     anahtar_kelimeler = ["fotosentez", "besin", "enerji", "bitki"]
-    ortak = [kelime for kelime in anahtar_kelimeler if kelime in cevap.lower()]
-    skor = min(1.0, 0.2 * len(ortak))  
+    ortak = [k for k in anahtar_kelimeler if k in cevap.lower()]
+    skor = min(1.0, 0.2 * len(ortak))  # 1 kelime = 0.2 puan max 1
 
     evaluator = RubricEvaluator()
     rubrik_sonuc = evaluator.evaluate(skor)
 
-    sonuc = {
+    # Kesinlikle rubrik_sonuc ekleniyor
+    return {
         "cevap": cevap,
         "skor": round(skor, 2),
         "ortak_kelimeler": ortak,
         "rubrik_sonuc": rubrik_sonuc,
         "metinsel_donut": f"{rubrik_sonuc['seviye']}/4 seviyesinde, etiket: {rubrik_sonuc['etiket']}"
     }
-    return sonuc
 
 
 cevap = input("Soru: Fotosentezin besin zincirindeki önemi nedir?\nCevabınız: ")
