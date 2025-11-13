@@ -1,11 +1,18 @@
+# core.py
+
+# 1️⃣ Gerekli tipleri import et
+from typing import Dict, List
+
+# 2️⃣ Modüller
 from .spelling import SpellingCorrector
 from .tokenizer import Tokenizer
-from .parser import POSParser       
+from .parser import POSParser
 from .morphology import MorphologyAnalyzer
-from .ontology import OntologyMatcher  
-from .extractor import Extractor      
-from .pronoun_resolver import PronounResolver  
+from .ontology import OntologyMatcher
+from .extractor import Extractor
+from .pronoun_resolver import PronounResolver
 from .model import EduscoModel
+
 class Edusco:
     def __init__(self):
         self.spell = SpellingCorrector()
@@ -17,42 +24,26 @@ class Edusco:
         self.pronoun_resolver = PronounResolver()
 
     def değerlendir(self, model: EduscoModel, cevap: str) -> Dict:
-
         duzeltmis = self.spell.correct(cevap)
-
         tokens = self.tokenizer.tokenize(duzeltmis)
-
         tokens = self.pronoun_resolver.resolve(tokens)
-
         parsed = self.parser.parse(tokens)
-
         morph_tokens = [self.morph.analyze(t) for t in tokens]
-
         relations = self.extractor.extract(tokens)
-
         model_tokens = self.tokenizer.tokenize(" ".join(model.yanitlar))
         model_tokens_morph = [self.morph.analyze(t) for t in model_tokens]
-
         ortak = self.ontology.match(morph_tokens, model_tokens_morph)
-
-        skor = len(ortak) / len(model_tokens) if model_tokens else 0
-
-        if skor >= 0.8:
-            seviye, etiket = 5, "Tam Doğru"
-        elif skor >= 0.6:
-            seviye, etiket = 4, "Büyük Oranda Doğru"
-        elif skor >= 0.4:
-            seviye, etiket = 3, "Kısmen Doğru"
-        elif skor >= 0.2:
-            seviye, etiket = 2, "Yüzeysel Doğru"
-        else:
-            seviye, etiket = 1, "Yanlış"
-
+        skor = len(ortak)/len(model_tokens) if model_tokens else 0
+        if skor >= 0.8: seviye, etiket = 5,"Tam Doğru"
+        elif skor >= 0.6: seviye, etiket = 4,"Büyük Oranda Doğru"
+        elif skor >= 0.4: seviye, etiket = 3,"Kısmen Doğru"
+        elif skor >= 0.2: seviye, etiket = 2,"Yüzeysel Doğru"
+        else: seviye, etiket = 1,"Yanlış"
         return {
-            "duzeltmis": " ".join([t["text"] for t in morph_tokens]),
-            "skor": round(skor, 2),
+            "duzeltmis":" ".join([t["text"] for t in morph_tokens]),
+            "skor": round(skor,2),
             "seviye": seviye,
             "etiket": etiket,
-            "ortak_kelimeler": ortak,
+            "ortak_kelimeler":ortak,
             "relations": relations
         }
