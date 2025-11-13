@@ -2,16 +2,21 @@ from typing import Dict
 from .spelling import SpellingCorrector
 from .tokenizer import Tokenizer
 from .parser import POSParser
+from .morphology import MorphologyAnalyzer
 from .ontology import OntologyMatcher
 from .rubric import RubricEvaluator
-from .model import EduscoModel
-
+from .models import EduscoModel
 
 class Edusco:
+    """
+    Türkçe öğrenci yanıtlarını anlamaya dayalı değerlendirme motoru
+    """
+
     def __init__(self):
         self.spell = SpellingCorrector()
         self.tokenizer = Tokenizer()
         self.parser = POSParser()
+        self.morph = MorphologyAnalyzer()
         self.ontology = OntologyMatcher()
         self.rubric = RubricEvaluator()
 
@@ -19,6 +24,7 @@ class Edusco:
         duzeltmis = self.spell.correct(cevap)
         tokens = self.tokenizer.tokenize(duzeltmis)
         morph_tokens = self.parser.parse(tokens)
+
         model_tokens_morph = []
         for y in model.get_all():
             y_duzeltmis = self.spell.correct(y)
@@ -27,11 +33,9 @@ class Edusco:
             model_tokens_morph.extend(y_morph)
 
         ortak = self.ontology.match(morph_tokens, model_tokens_morph)
-
         skor = len(ortak) / max(len(tokens), 1)
-        
-        rubric_sonuc = self.rubric.evaluate(skor)
 
+        rubric_sonuc = self.rubric.evaluate(skor)
         metinsel_donut = self._metinsel_donut_uret(rubric_sonuc, ortak)
 
         return {
@@ -39,23 +43,19 @@ class Edusco:
             "skor": round(skor, 2),
             "seviye": rubric_sonuc["seviye"],
             "etiket": rubric_sonuc["etiket"],
+            "yorum": rubric_sonuc["yorum"],
             "ortak_kelimeler": ortak,
-            "rubrik_sonuc": rubric_sonuc,
             "metinsel_donut": metinsel_donut
         }
 
-    def _metinsel_donut_uret(self, rubric_sonuc, ortak):
+    def _metinsel_donut_uret(self, rubric_sonuc: dict, ortak: list) -> str:
+        ortak_str = ", ".join(ortak) if ortak else "henüz belirgin anahtar kavram yok"
         seviye = rubric_sonuc["seviye"]
-        etiket = rubric_sonuc["etiket"]
-        ortak_kelimeler = ", ".join(ortak) if ortak else "henüz belirgin anahtar kelime yok"
-
-        if seviye == 0:
-            return f"Cevabınız konudan uzak. Önemli kavramları içermiyor ({ortak_kelimeler})."
-        elif seviye == 1:
-            return f"Cevabınız fotosentezin rolünü belirtmiş ancak nedenini açıklamamış. Anahtar kelimeler: {ortak_kelimeler}."
-        elif seviye == 2:
-            return f"Cevabınız kısmen doğru; yalnızca bir bileşenden bahsetmişsiniz. Anahtar kelimeler: {ortak_kelimeler}."
+        if seviye >= 4:
+            return f" Harika! Cevabın {rubric_sonuc['etiket'].lower()}. Anahtar kavramlar: {ortak_str}."
         elif seviye == 3:
-            return f"Cevabınız büyük oranda doğru, ancak açıklama iki bileşenle sınırlı kalmış. Anahtar kelimeler: {ortak_kelimeler}."
+            return f" İyi bir cevap verdin. {rubric_sonuc['yorum']} Anahtar kavramlar: {ortak_str}."
+        elif seviye == 2:
+            return f" Cevabın yüzeysel doğru. {rubric_sonuc['yorum']} Eksik kalan kavramları gözden geçir."
         else:
-            return f"Tebrikler! Cevabınız tam ve bütüncül. Fotosentezin besin zincirindeki önemini doğru açıklamışsınız ({ortak_kelimeler})."
+            return f" Cevabın konu dışı veya eksik. {rubric_sonuc['yorum']}"
