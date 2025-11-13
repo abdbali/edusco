@@ -1,6 +1,5 @@
 from edusco import Edusco, EduscoModel
 
-# Sorular ve model yanıtları
 sorular = [
     {"soru": "Fotosentez nedir?", 
      "model": ["bitki", "güneş", "karbondioksit", "su", "glikoz"]},
@@ -10,11 +9,10 @@ sorular = [
      "model": ["oksijen", "glikoz", "enerji", "su", "bitki"]}
 ]
 
-# Öğrenci cevapları
 cevaplar = [
-    "Bitkiler güneş ışığı ve karbondioksit ile glikoz üretir",
-    "Fotosentez için ışık, yaprak ve klorofil gerekir",
-    "Fotosentez sırasında oksijen ve glikoz oluşur"
+    "O güneş ışığı ile şeker üretir",
+    "Fotosentez için ışık ve yaprak gereklidir",
+    "Oksijen ve glikoz oluşur"
 ]
 
 edusco = Edusco()
