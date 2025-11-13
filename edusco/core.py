@@ -6,7 +6,7 @@ from .morphology import MorphologyAnalyzer
 from .ontology import OntologyMatcher
 from .extractor import Extractor
 from .pronoun_resolver import PronounResolver
-from .model import EduscoModel
+from .models import EduscoModel
 
 class Edusco:
     def __init__(self):
