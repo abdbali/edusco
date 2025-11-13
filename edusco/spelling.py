@@ -7,5 +7,4 @@ class SpellingCorrector:
         self.spell = SpellChecker(language=None, local_dictionary=tr_dict_path)
 
     def correct(self, text: str) -> str:
-        kelimeler = text.strip().lower().split()
-        return " ".join([self.spell.correction(k) for k in kelimeler])
+        return " ".join([self.spell.correction(k) for k in text.strip().lower().split()])
