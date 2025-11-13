@@ -1,5 +1,5 @@
 from .core import Edusco
-from .models import EduscoModel
+from .model import EduscoModel
 from .spelling import SpellingCorrector
 from .tokenizer import Tokenizer
 from .parser import POSParser
