@@ -1,21 +1,24 @@
 from .evaluator import EduscoModel
+from .core import Tokenizer, POSParser, MorphologyAnalyzer, OntologyMatcher
 
 class Edusco:
     def __init__(self):
-        pass
-
-    def değerlendir(self, model: EduscoModel, cevap: str):
+        # Core pipeline modülleri
+        self.tokenizer = Tokenizer()
+        self.parser = POSParser()
+        self.morph = MorphologyAnalyzer()
+        self.ontology = OntologyMatcher()
     
+    def değerlendir(self, model: EduscoModel, cevap: str):
         duzeltmis = cevap.strip().lower()
+        tokens = self.tokenizer.tokenize(duzeltmis)
+        parsed = self.parser.parse(tokens)
+        morph_tokens = [self.morph.analyze(t) for t in tokens]
+        model_tokens = self.tokenizer.tokenize(" ".join(model.yanitlar).lower())
+        model_tokens_morph = [self.morph.analyze(t) for t in model_tokens]
+        ortak = self.ontology.match(morph_tokens, model_tokens_morph)  
+        skor = len(ortak) / len(model_tokens) if model_tokens else 0
 
-  
-        model_text = " ".join(model.yanitlar).lower()
-        model_kelimeler = set(model_text.split())
-        cevap_kelimeler = set(duzeltmis.split())
-        ortak = model_kelimeler.intersection(cevap_kelimeler)
-        skor = len(ortak) / len(model_kelimeler) if model_kelimeler else 0
-
-        # Skoru 0-4 seviyesine dönüştür
         if skor >= 0.8:
             seviye, etiket = 4, "Tam Doğru"
         elif skor >= 0.6:
@@ -28,7 +31,7 @@ class Edusco:
             seviye, etiket = 0, "Yanlış"
 
         return {
-            "duzeltmis": duzeltmis,
+            "duzeltmis": " ".join([t["text"] for t in morph_tokens]),  # düzeltmiş metin
             "skor": round(skor, 2),
             "seviye": seviye,
             "etiket": etiket
