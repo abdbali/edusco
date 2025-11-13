@@ -1,5 +1,5 @@
-from spellchecker import SpellChecker
 import os
+from spellchecker import SpellChecker
 
 class SpellingCorrector:
     def __init__(self):
@@ -9,12 +9,10 @@ class SpellingCorrector:
 
     def correct(self, text: str) -> str:
         kelimeler = text.strip().lower().split()
-
         duzeltilmis = []
         for k in kelimeler:
-            if k:  
-                c = self.spell.correction(k)
-                if c is None:
-                    c = k  
-                duzeltilmis.append(c)
+            c = self.spell.correction(k)
+            if c is None:
+                c = k  
+            duzeltilmis.append(c)
         return " ".join(duzeltilmis)
