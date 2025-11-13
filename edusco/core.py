@@ -1,9 +1,5 @@
-# core.py
-
-# 1️⃣ Gerekli tipleri import et
 from typing import Dict, List
 
-# 2️⃣ Modüller
 from .spelling import SpellingCorrector
 from .tokenizer import Tokenizer
 from .parser import POSParser
