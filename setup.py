@@ -4,10 +4,8 @@ setup(
     name="edusco",
     version="0.1",
     packages=find_packages(),
-    install_requires=[
-        "pyspellchecker"
-    ],
+    install_requires=["pyspellchecker"],
     package_data={
-        "edusco": ["resources/*.json"],  # <-- burası önemli
+        "edusco": ["resources/*.json"],   
     },
 )
