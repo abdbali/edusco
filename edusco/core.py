@@ -1,12 +1,10 @@
-from typing import Dict
-from .models import EduscoModel
 from .spelling import SpellingCorrector
 from .tokenizer import Tokenizer
-from .parser import POSParser
+from .parser import POSParser        # yeni eklenen
 from .morphology import MorphologyAnalyzer
-from .ontology import OntologyMatcher
-from .extractor import Extractor
-from .pronoun_resolver import PronounResolver
+from .ontology import OntologyMatcher  # güncellendi
+from .extractor import Extractor      # yeni eklenen
+from .pronoun_resolver import PronounResolver  # yeni eklenen
 
 class Edusco:
     def __init__(self):
