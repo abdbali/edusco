@@ -81,7 +81,7 @@ Bu sayede, farklı biçimlerde ifade edilen ama aynı fikri taşıyan cevapları
 ---
 
 ## 5. Kurulum
-
+```python
 git clone https://github.com/abdbali/edusco.git
 cd edusco
 pip install -e .
@@ -90,6 +90,8 @@ pip install -e .
 
 
 !pip install --force-reinstall git+https://github.com/abdbali/edusco.git
+
+
 
 <img width="795" height="328" alt="image" src="https://github.com/user-attachments/assets/72ca56f0-0379-4253-9f57-24c86a6d1407" />
 
