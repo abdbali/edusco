@@ -1,5 +1,4 @@
 from typing import Dict, List
-
 from .spelling import SpellingCorrector
 from .tokenizer import Tokenizer
 from .parser import POSParser
