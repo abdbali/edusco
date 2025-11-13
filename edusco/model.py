@@ -1,5 +1,11 @@
-from typing import List
-
 class EduscoModel:
-    def __init__(self, yanitlar: List[str]):
+
+    def __init__(self, yanitlar):
+
+        if isinstance(yanitlar, str):
+            yanitlar = [yanitlar]
         self.yanitlar = yanitlar
+
+    def get_all(self):
+
+        return self.yanitlar
