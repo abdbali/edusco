@@ -5,10 +5,10 @@ class Edusco:
         pass
 
     def değerlendir(self, model: EduscoModel, cevap: str):
-        # Basit yazım düzeltme
+    
         duzeltmis = cevap.strip().lower()
 
-        # Basit kelime benzerliği (intersection)
+  
         model_text = " ".join(model.yanitlar).lower()
         model_kelimeler = set(model_text.split())
         cevap_kelimeler = set(duzeltmis.split())
