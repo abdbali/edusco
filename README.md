@@ -1,6 +1,7 @@
+<img width="400" height="150" alt="2" src="https://github.com/user-attachments/assets/e37e2906-0163-4069-86f0-277f4ab97ed3" />
+<img width="400" height="150" alt="1" src="https://github.com/user-attachments/assets/cb0c3840-5919-4c81-b66c-7891de0d4ef1" />
 
-<img width="400" height="150" alt="2" src="https://github.com/user-attachments/assets/b4a6d3b4-e43b-4d14-8f70-ae07375a0831" />
-<img width="400" height="150" alt="1" src="https://github.com/user-attachments/assets/4abb0728-17bd-4e00-b4c1-250d40db985d" />
+
 
 # Edusco — Anlamsal Öğrenci Cevabı Değerlendirme Sistemi  
 
