@@ -81,7 +81,7 @@ Bu sayede, farklı biçimlerde ifade edilen ama aynı fikri taşıyan cevapları
 ---
 
 ## 5. Kurulum
-```python
+
 git clone https://github.com/abdbali/edusco.git
 cd edusco
 pip install -e .
