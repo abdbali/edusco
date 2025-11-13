@@ -1,29 +1,41 @@
 class RubricEvaluator:
-
+    """
+    Değerlendirme skoruna göre seviye ve nitelik belirler.
+    """
     def __init__(self):
-        self.kriterler = {
-            1: ["besin zinciri", "sürdür", "devam"],
-            2: ["üretici", "tüketici", "enerji", "besin"],
-            3: ["fotosentez", "üretir", "süreklilik"]
+        # Seviye aralıklarını tanımlayabilirsin (0.0–1.0 arası)
+        self.levels = {
+            0: (0.0, 0.2),   # Çok zayıf
+            1: (0.2, 0.4),   # Kısmen doğru
+            2: (0.4, 0.6),   # Yüzeysel doğru
+            3: (0.6, 0.8),   # Gelişmiş doğru
+            4: (0.8, 1.0)    # Tam doğru
         }
 
-    def değerlendir(self, ortak_kelimeler):
-        puan = 0
-        kapsanan = []
-        for i, kelimeler in self.kriterler.items():
-            if any(k in ortak_kelimeler for k in kelimeler):
-                puan += 1
-                kapsanan.append(i)
+    def evaluate(self, skor: float) -> dict:
+        """
+        Skor değerine göre seviye ve açıklama döndürür.
+        """
+        if skor < 0:
+            skor = 0
+        if skor > 1:
+            skor = 1
 
-        if puan == 0:
-            etiket = "İlgisiz veya yanlış cevap"
-        elif puan == 1:
-            etiket = "Fotosentezin besin zincirini sürdürdüğünü belirtir ancak nedenini açıklamaz."
-        elif puan == 2:
-            etiket = "Fotosentezin besin zincirindeki önemini ifade eder ve üç bileşenden yalnızca birini açıklar."
-        elif puan == 3:
-            etiket = "Fotosentezin besin zincirindeki önemini ifade eder ve üç bileşenden ikisini açıklar."
-        else:
-            etiket = "Fotosentezin besin zincirini sürdürdüğünü ve üç nedenini açıklar."
+        # Skorun hangi aralıkta olduğunu bul
+        for seviye, (alt, ust) in self.levels.items():
+            if alt <= skor <= ust:
+                break
 
-        return {"puan": puan, "kapsanan_kriterler": kapsanan, "açıklama": etiket}
+        aciklama = {
+            0: "Yanlış veya alakasız cevap.",
+            1: "Kısmen doğru ama eksik veya yüzeysel ifade.",
+            2: "Temel kavram doğru ancak açıklama yüzeysel.",
+            3: "Açıklama çoğunlukla doğru ve mantıklı.",
+            4: "Cevap tamamen doğru ve kapsamlı."
+        }
+
+        return {
+            "seviye": seviye,
+            "skor": round(skor, 2),
+            "donut": aciklama[seviye]
+        }
