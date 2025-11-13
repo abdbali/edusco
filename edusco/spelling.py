@@ -1,11 +1,11 @@
-import os
 from spellchecker import SpellChecker
 
 class SpellingCorrector:
     def __init__(self):
-
-        tr_dict_path = os.path.join(os.path.dirname(__file__), "resources", "tr.json")
-        self.spell = SpellChecker(language=None, local_dictionary=tr_dict_path)
+        try:
+            self.spell = SpellChecker(language='tr')
+        except Exception:
+            self.spell = SpellChecker(language=None)
 
     def correct(self, text: str) -> str:
         kelimeler = text.strip().lower().split()
@@ -13,6 +13,6 @@ class SpellingCorrector:
         for k in kelimeler:
             c = self.spell.correction(k)
             if c is None:
-                c = k  
+                c = k
             duzeltilmis.append(c)
         return " ".join(duzeltilmis)
