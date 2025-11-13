@@ -1,10 +1,8 @@
 from spellchecker import SpellChecker
-import os
 
 class SpellingCorrector:
     def __init__(self):
-        tr_dict_path = os.path.join(os.path.dirname(__file__), "resources", "tr.json")
-        self.spell = SpellChecker(language=None, local_dictionary=tr_dict_path)
+        self.spell = SpellChecker(language=None, local_dictionary="tr.json")
 
     def correct(self, text: str) -> str:
         kelimeler = text.strip().lower().split()
