@@ -7,5 +7,7 @@ setup(
     install_requires=[
         "pyspellchecker"
     ],
-    python_requires='>=3.8'
+    package_data={
+        "edusco": ["resources/*.json"],  # <-- burası önemli
+    },
 )
