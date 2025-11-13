@@ -1,61 +1,44 @@
-from typing import Dict
+from typing import Dict, List
 from .spelling import SpellingCorrector
 from .tokenizer import Tokenizer
 from .parser import POSParser
 from .morphology import MorphologyAnalyzer
 from .ontology import OntologyMatcher
-from .rubric import RubricEvaluator
-from .models import EduscoModel
+from .extractor import Extractor
+from .pronoun_resolver import PronounResolver
+from .model import EduscoModel
 
 class Edusco:
-    """
-    Türkçe öğrenci yanıtlarını anlamaya dayalı değerlendirme motoru
-    """
-
     def __init__(self):
         self.spell = SpellingCorrector()
         self.tokenizer = Tokenizer()
         self.parser = POSParser()
         self.morph = MorphologyAnalyzer()
         self.ontology = OntologyMatcher()
-        self.rubric = RubricEvaluator()
+        self.extractor = Extractor()
+        self.pronoun_resolver = PronounResolver()
 
     def değerlendir(self, model: EduscoModel, cevap: str) -> Dict:
         duzeltmis = self.spell.correct(cevap)
         tokens = self.tokenizer.tokenize(duzeltmis)
-        morph_tokens = self.parser.parse(tokens)
-
-        model_tokens_morph = []
-        for y in model.get_all():
-            y_duzeltmis = self.spell.correct(y)
-            y_tokens = self.tokenizer.tokenize(y_duzeltmis)
-            y_morph = self.parser.parse(y_tokens)
-            model_tokens_morph.extend(y_morph)
-
+        tokens = self.pronoun_resolver.resolve(tokens)
+        parsed = self.parser.parse(tokens)
+        morph_tokens = [self.morph.analyze(t) for t in tokens]
+        relations = self.extractor.extract(tokens)
+        model_tokens = self.tokenizer.tokenize(" ".join(model.yanitlar))
+        model_tokens_morph = [self.morph.analyze(t) for t in model_tokens]
         ortak = self.ontology.match(morph_tokens, model_tokens_morph)
-        skor = len(ortak) / max(len(tokens), 1)
-
-        rubric_sonuc = self.rubric.evaluate(skor)
-        metinsel_donut = self._metinsel_donut_uret(rubric_sonuc, ortak)
-
+        skor = len(ortak)/len(model_tokens) if model_tokens else 0
+        if skor >= 0.8: seviye, etiket = 5,"Tam Doğru"
+        elif skor >= 0.6: seviye, etiket = 4,"Büyük Oranda Doğru"
+        elif skor >= 0.4: seviye, etiket = 3,"Kısmen Doğru"
+        elif skor >= 0.2: seviye, etiket = 2,"Yüzeysel Doğru"
+        else: seviye, etiket = 1,"Yanlış"
         return {
-            "duzeltmis": duzeltmis,
-            "skor": round(skor, 2),
-            "seviye": rubric_sonuc["seviye"],
-            "etiket": rubric_sonuc["etiket"],
-            "yorum": rubric_sonuc["yorum"],
-            "ortak_kelimeler": ortak,
-            "metinsel_donut": metinsel_donut
+            "duzeltmis":" ".join([t["text"] for t in morph_tokens]),
+            "skor": round(skor,2),
+            "seviye": seviye,
+            "etiket": etiket,
+            "ortak_kelimeler":ortak,
+            "relations": relations
         }
-
-    def _metinsel_donut_uret(self, rubric_sonuc: dict, ortak: list) -> str:
-        ortak_str = ", ".join(ortak) if ortak else "henüz belirgin anahtar kavram yok"
-        seviye = rubric_sonuc["seviye"]
-        if seviye >= 4:
-            return f" Harika! Cevabın {rubric_sonuc['etiket'].lower()}. Anahtar kavramlar: {ortak_str}."
-        elif seviye == 3:
-            return f" İyi bir cevap verdin. {rubric_sonuc['yorum']} Anahtar kavramlar: {ortak_str}."
-        elif seviye == 2:
-            return f" Cevabın yüzeysel doğru. {rubric_sonuc['yorum']} Eksik kalan kavramları gözden geçir."
-        else:
-            return f" Cevabın konu dışı veya eksik. {rubric_sonuc['yorum']}"
