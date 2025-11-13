@@ -1,4 +1,4 @@
 from .core import Edusco
-from .evaluator import ModelCevap
+from .evaluator import EduscoModel
 
-__all__ = ["Edusco", "ModelCevap"]
+__all__ = ["Edusco", "EduscoModel"]
