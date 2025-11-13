@@ -3,25 +3,20 @@ class RubricEvaluator:
     Değerlendirme skoruna göre seviye ve nitelik belirler.
     """
     def __init__(self):
-        # Seviye aralıklarını tanımlayabilirsin (0.0–1.0 arası)
         self.levels = {
-            0: (0.0, 0.2),   # Çok zayıf
-            1: (0.2, 0.4),   # Kısmen doğru
-            2: (0.4, 0.6),   # Yüzeysel doğru
-            3: (0.6, 0.8),   # Gelişmiş doğru
-            4: (0.8, 1.0)    # Tam doğru
+            0: (0.0, 0.2),
+            1: (0.2, 0.4),
+            2: (0.4, 0.6),
+            3: (0.6, 0.8),
+            4: (0.8, 1.0)
         }
 
     def evaluate(self, skor: float) -> dict:
-        """
-        Skor değerine göre seviye ve açıklama döndürür.
-        """
         if skor < 0:
             skor = 0
         if skor > 1:
             skor = 1
 
-        # Skorun hangi aralıkta olduğunu bul
         for seviye, (alt, ust) in self.levels.items():
             if alt <= skor <= ust:
                 break
@@ -37,5 +32,5 @@ class RubricEvaluator:
         return {
             "seviye": seviye,
             "skor": round(skor, 2),
-            "donut": aciklama[seviye]
+            "yorum": aciklama[seviye]   
         }
