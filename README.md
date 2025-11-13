@@ -1,3 +1,7 @@
+
+<img width="400" height="150" alt="2" src="https://github.com/user-attachments/assets/b4a6d3b4-e43b-4d14-8f70-ae07375a0831" />
+<img width="400" height="150" alt="1" src="https://github.com/user-attachments/assets/4abb0728-17bd-4e00-b4c1-250d40db985d" />
+
 # Edusco — Anlamsal Öğrenci Cevabı Değerlendirme Sistemi  
 
 **Edusco**, öğrencilerin kısa ve açık uçlu cevaplarını anlam açısından değerlendiren bir Python kütüphanesidir.  
