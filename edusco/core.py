@@ -1,22 +1,29 @@
+from spellchecker import SpellChecker
 from .evaluator import EduscoModel
 from .core import Tokenizer, POSParser, MorphologyAnalyzer, OntologyMatcher
 
 class Edusco:
     def __init__(self):
-        # Core pipeline modülleri
+        self.spell = SpellChecker(language='tr')
         self.tokenizer = Tokenizer()
         self.parser = POSParser()
         self.morph = MorphologyAnalyzer()
         self.ontology = OntologyMatcher()
-    
+
     def değerlendir(self, model: EduscoModel, cevap: str):
-        duzeltmis = cevap.strip().lower()
+
+        kelimeler = cevap.strip().lower().split()
+        duzeltmis = " ".join([self.spell.correction(k) for k in kelimeler])
+
         tokens = self.tokenizer.tokenize(duzeltmis)
         parsed = self.parser.parse(tokens)
         morph_tokens = [self.morph.analyze(t) for t in tokens]
+
+   
         model_tokens = self.tokenizer.tokenize(" ".join(model.yanitlar).lower())
         model_tokens_morph = [self.morph.analyze(t) for t in model_tokens]
-        ortak = self.ontology.match(morph_tokens, model_tokens_morph)  
+        ortak = self.ontology.match(morph_tokens, model_tokens_morph)
+
         skor = len(ortak) / len(model_tokens) if model_tokens else 0
 
         if skor >= 0.8:
@@ -31,7 +38,7 @@ class Edusco:
             seviye, etiket = 0, "Yanlış"
 
         return {
-            "duzeltmis": " ".join([t["text"] for t in morph_tokens]),  # düzeltmiş metin
+            "duzeltmis": " ".join([t["text"] for t in morph_tokens]),  # Düzeltilmiş metin
             "skor": round(skor, 2),
             "seviye": seviye,
             "etiket": etiket
