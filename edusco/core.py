@@ -17,32 +17,24 @@ class Edusco:
         self.pronoun_resolver = PronounResolver()
 
     def değerlendir(self, model: EduscoModel, cevap: str) -> Dict:
-        # 1. Yazım düzelt
+
         duzeltmis = self.spell.correct(cevap)
 
-        # 2. Tokenize
         tokens = self.tokenizer.tokenize(duzeltmis)
 
-        # 3. Zamir çöz
         tokens = self.pronoun_resolver.resolve(tokens)
 
-        # 4. POS parse
         parsed = self.parser.parse(tokens)
 
-        # 5. Morphology
         morph_tokens = [self.morph.analyze(t) for t in tokens]
 
-        # 6. ÖZN-Eylem-Nesne çıkarımı
         relations = self.extractor.extract(tokens)
 
-        # 7. Model tokenleri
         model_tokens = self.tokenizer.tokenize(" ".join(model.yanitlar))
         model_tokens_morph = [self.morph.analyze(t) for t in model_tokens]
 
-        # 8. Ontoloji eşleştirme
         ortak = self.ontology.match(morph_tokens, model_tokens_morph)
 
-        # 9. Skor hesapla
         skor = len(ortak) / len(model_tokens) if model_tokens else 0
 
         if skor >= 0.8:
