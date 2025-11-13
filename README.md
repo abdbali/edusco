@@ -76,7 +76,7 @@ Bu sayede, farklı biçimlerde ifade edilen ama aynı fikri taşıyan cevapları
 
 ## 5. Kurulum
 
-### 1. Pip ile doğrudan yükleme (GitHub üzerinden)
+### 1. Pip ile doğrudan yükleme 
 ```bash
-pip install git+https://github.com/KULLANICIADI/edusco.git
+pip install git+https://github.com/abdbali/edusco.git
 
