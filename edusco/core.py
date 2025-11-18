@@ -7,6 +7,51 @@ from .ontology import OntologyMatcher
 from .extractor import Extractor
 from .pronoun_resolver import PronounResolver
 from .models import EduscoModel
+from typing import Dict, List
+from difflib import SequenceMatcher
+
+
+class SpellingCorrector:
+    def correct(self, text: str) -> str:
+        return text.lower()
+
+
+class Tokenizer:
+    def tokenize(self, text: str) -> List[str]:
+        return text.split()
+
+
+class POSParser:
+    def parse(self, tokens: List[str]) -> List[Dict]:
+        return [{"text": t, "pos": "noun"} for t in tokens]
+
+
+class MorphologyAnalyzer:
+    def analyze(self, token: str) -> Dict:
+        return {"text": token, "root": token}
+
+
+class OntologyMatcher:
+    def match(self, tokens1: List[Dict], tokens2: List[Dict]) -> List[str]:
+        words1 = [t["root"] for t in tokens1]
+        words2 = [t["root"] for t in tokens2]
+        return [w for w in words1 if w in words2]
+
+class PronounResolver:
+    def resolve(self, tokens: List[str]) -> List[str]:
+        return tokens
+
+
+class Extractor:
+    def extract(self, tokens: List[str]) -> List[Dict]:
+        if not tokens:
+            return []
+        return [{"ozne": tokens[0], "eylem": " ".join(tokens[1:]), "nesne": ""}]
+
+class EduscoModel:
+    def __init__(self, yanitlar: List[str]):
+        self.yanitlar = yanitlar
+
 
 class Edusco:
     """Edusco motoru: yazım düzeltme, anlamsal eşleşme, rubrik puanlama"""
@@ -20,51 +65,60 @@ class Edusco:
         self.extractor = Extractor()
         self.pronoun_resolver = PronounResolver()
 
+    def semantik_skor(self, student: str, model: str) -> float:
+        model_cumleler = [c.strip() for c in model.split(",")]
+        student_cumleler = [c.strip() for c in student.split(",")]
+        skorlar = []
+        for mc in model_cumleler:
+            max_skor = max([SequenceMatcher(None, mc.lower(), sc.lower()).ratio() for sc in student_cumleler])
+            skorlar.append(max_skor)
+        return sum(skorlar) / len(skorlar) if skorlar else 0
+
     def değerlendir(self, model: EduscoModel, cevap: str) -> Dict:
-        #  Yazım düzeltme
+        # 1. Yazım düzelt
         duzeltmis = self.spell.correct(cevap)
 
-        #  Tokenize
+        # 2. Tokenize
         tokens = self.tokenizer.tokenize(duzeltmis)
 
-        # Zamir çözme
+        # 3. Zamir çözme
         tokens = self.pronoun_resolver.resolve(tokens)
 
-        #  POS & Parser
+        # 4. POS parse ve morph
         parsed = self.parser.parse(tokens)
-
-        #  Morphology
         morph_tokens = [self.morph.analyze(t) for t in tokens]
 
-        #  Anlamsal ilişkiler çıkar
+        # 5. Anlamsal ilişkiler çıkar
         relations = self.extractor.extract(tokens)
 
-        #  Model ile eşleşme
+        # 6. Model ile eşleşme
         model_tokens = self.tokenizer.tokenize(" ".join(model.yanitlar))
         model_tokens_morph = [self.morph.analyze(t) for t in model_tokens]
         ortak = self.ontology.match(morph_tokens, model_tokens_morph)
 
-        #  Skor hesapla
-        skor = len(ortak)/len(model_tokens) if model_tokens else 0
+        # 7. Anlamsal skor
+        sem_score = self.semantik_skor(cevap, " ".join(model.yanitlar))
 
-        #  Rubrik seviyesini belirle
-if skor >= 0.50:
-    seviye, etiket = 4, "Tam Doğru"
-elif skor >= 0.40:
-    seviye, etiket = 3, "Büyük Oranda Doğru"
-elif skor >= 0.25:
-    seviye, etiket = 2, "Kısmen Doğru"
-elif skor >= 0.15:
-    seviye, etiket = 1, "Yüzeysel Doğru"
-else:
-    seviye, etiket = 0, "Yanlış"
+        # 8. Toplam skor (ortak kelimeler + anlamsal)
+        skor = (len(ortak)/len(model_tokens) * 0.4 + sem_score * 0.6) if model_tokens else sem_score
 
+        # 9. Rubrik seviyesi
+        if skor >= 0.:49
+            seviye, etiket = 4, "Tam Doğru"
+        elif skor >= 0.35:
+            seviye, etiket = 3, "Büyük Oranda Doğru"
+        elif skor >= 0.25:
+            seviye, etiket = 2, "Kısmen Doğru"
+        elif skor >= 0.15:
+            seviye, etiket = 1, "Yüzeysel Doğru"
+        else:
+            seviye, etiket = 0, "Yanlış"
 
         return {
-            "duzeltmis":" ".join([t["text"] for t in morph_tokens]),
-            "skor": round(skor,2),
+            "duzeltmis": " ".join([t["text"] for t in morph_tokens]),
+            "skor": round(skor, 2),
             "seviye": seviye,
             "etiket": etiket,
-            "ortak_kelimeler":ortak,
+            "ortak_kelimeler": ortak,
             "relations": relations
         }
