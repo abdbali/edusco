@@ -65,6 +65,85 @@ class Edusco:
         self.extractor = Extractor()
         self.pronoun_resolver = PronounResolver()
 
+from typing import Dict, List
+from difflib import SequenceMatcher
+
+# --------------------------
+# Basit spelling corrector
+# --------------------------
+class SpellingCorrector:
+    def correct(self, text: str) -> str:
+        return text.lower()
+
+# --------------------------
+# Basit tokenizer
+# --------------------------
+class Tokenizer:
+    def tokenize(self, text: str) -> List[str]:
+        return text.split()
+
+# --------------------------
+# Basit POS Parser
+# --------------------------
+class POSParser:
+    def parse(self, tokens: List[str]) -> List[Dict]:
+        return [{"text": t, "pos": "noun"} for t in tokens]
+
+# --------------------------
+# Basit Morphology Analyzer
+# --------------------------
+class MorphologyAnalyzer:
+    def analyze(self, token: str) -> Dict:
+        return {"text": token, "root": token}
+
+# --------------------------
+# Basit Ontology Matcher
+# --------------------------
+class OntologyMatcher:
+    def match(self, tokens1: List[Dict], tokens2: List[Dict]) -> List[str]:
+        words1 = [t["root"] for t in tokens1]
+        words2 = [t["root"] for t in tokens2]
+        return [w for w in words1 if w in words2]
+
+# --------------------------
+# Zamir çözücü
+# --------------------------
+class PronounResolver:
+    def resolve(self, tokens: List[str]) -> List[str]:
+        return tokens
+
+# --------------------------
+# Basit Extractor (anlamsal ilişkiler çıkarıcı)
+# --------------------------
+class Extractor:
+    def extract(self, tokens: List[str]) -> List[Dict]:
+        if not tokens:
+            return []
+        return [{"ozne": tokens[0], "eylem": " ".join(tokens[1:]), "nesne": ""}]
+
+# --------------------------
+# Edusco model
+# --------------------------
+class EduscoModel:
+    def __init__(self, yanitlar: List[str]):
+        self.yanitlar = yanitlar
+
+# --------------------------
+# Edusco ana sınıf
+# --------------------------
+class Edusco:
+    """Edusco motoru: yazım düzeltme, anlamsal eşleşme, rubrik puanlama"""
+
+    def __init__(self):
+        self.spell = SpellingCorrector()
+        self.tokenizer = Tokenizer()
+        self.parser = POSParser()
+        self.morph = MorphologyAnalyzer()
+        self.ontology = OntologyMatcher()
+        self.extractor = Extractor()
+        self.pronoun_resolver = PronounResolver()
+
+    # Cümle bazlı anlamsal skor
     def semantik_skor(self, student: str, model: str) -> float:
         model_cumleler = [c.strip() for c in model.split(",")]
         student_cumleler = [c.strip() for c in student.split(",")]
@@ -102,8 +181,8 @@ class Edusco:
         # 8. Toplam skor (ortak kelimeler + anlamsal)
         skor = (len(ortak)/len(model_tokens) * 0.4 + sem_score * 0.6) if model_tokens else sem_score
 
-        # 9. Rubrik seviyesi
-        if skor >= 0.:49
+        # 9. Rubrik seviyesi (senin verdiğin revize eşikler)
+        if skor >= 0.49:
             seviye, etiket = 4, "Tam Doğru"
         elif skor >= 0.35:
             seviye, etiket = 3, "Büyük Oranda Doğru"
