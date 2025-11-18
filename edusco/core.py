@@ -49,10 +49,10 @@ class Edusco:
 
         #  Rubrik seviyesini belirle
     skor = len(ortak)/len(model_tokens) if model_tokens else 0
-        if skor >= 0.7: seviye, etiket = 4, "Tam Doğru"
-        elif skor >= 0.55: seviye, etiket = 3, "Büyük Oranda Doğru"
-        elif skor >= 0.4: seviye, etiket = 2, "Kısmen Doğru"
-        elif skor >= 0.2: seviye, etiket = 1, "Yüzeysel Doğru"
+        if skor >= 0.45: seviye, etiket = 4, "Tam Doğru"
+        elif skor >= 0.3: seviye, etiket = 3, "Büyük Oranda Doğru"
+        elif skor >= 0.2: seviye, etiket = 2, "Kısmen Doğru"
+        elif skor >= 0.1: seviye, etiket = 1, "Yüzeysel Doğru"
         else: seviye, etiket = 0, "Yanlış
 
         return {
