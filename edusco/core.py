@@ -48,12 +48,17 @@ class Edusco:
         skor = len(ortak)/len(model_tokens) if model_tokens else 0
 
         #  Rubrik seviyesini belirle
-    skor = len(ortak)/len(model_tokens) if model_tokens else 0
-        if skor >= 0.45: seviye, etiket = 4, "Tam Doğru"
-        elif skor >= 0.3: seviye, etiket = 3, "Büyük Oranda Doğru"
-        elif skor >= 0.2: seviye, etiket = 2, "Kısmen Doğru"
-        elif skor >= 0.1: seviye, etiket = 1, "Yüzeysel Doğru"
-        else: seviye, etiket = 0, "Yanlış
+if skor >= 0.50:
+    seviye, etiket = 4, "Tam Doğru"
+elif skor >= 0.40:
+    seviye, etiket = 3, "Büyük Oranda Doğru"
+elif skor >= 0.25:
+    seviye, etiket = 2, "Kısmen Doğru"
+elif skor >= 0.15:
+    seviye, etiket = 1, "Yüzeysel Doğru"
+else:
+    seviye, etiket = 0, "Yanlış"
+
 
         return {
             "duzeltmis":" ".join([t["text"] for t in morph_tokens]),
