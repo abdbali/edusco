@@ -92,18 +92,4 @@ pip install -e .
 !pip install --force-reinstall git+https://github.com/abdbali/edusco.git
 
 
-
-<img width="795" height="328" alt="image" src="https://github.com/user-attachments/assets/72ca56f0-0379-4253-9f57-24c86a6d1407" />
-
-<img width="756" height="146" alt="image" src="https://github.com/user-attachments/assets/0a1bb002-7993-4655-8dc7-4a266f05f4c9" />
-
-<img width="726" height="472" alt="image" src="https://github.com/user-attachments/assets/661801aa-ab70-4d98-bb8b-05115c6c50f6" />
-
-<img width="716" height="414" alt="image" src="https://github.com/user-attachments/assets/6223cee7-1276-4fd9-9844-4dc1cb9e9b6b" />
-
-<img width="482" height="716" alt="image" src="https://github.com/user-attachments/assets/1d7b4453-58b1-412a-976f-6acf631e9714" />
-
-
-
-
-
+<img width="675" height="668" alt="image" src="https://github.com/user-attachments/assets/d857df6c-5063-424b-aefd-f7095c520c36" />
