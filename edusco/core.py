@@ -181,6 +181,9 @@ class Edusco:
         # 8. Toplam skor (ortak kelimeler + anlamsal)
         skor = (len(ortak)/len(model_tokens) * 0.4 + sem_score * 0.6) if model_tokens else sem_score
 
+         # 2 ile çarparak genişletiyoruz, sonra 0–1 aralığına sabitliyoruz
+        skor = min(1.0, skor_raw * 2)
+
         # 9. Rubrik seviyesi (senin verdiğin revize eşikler)
         if skor >= 0.45:
             seviye, etiket = 4, "Tam Doğru"
