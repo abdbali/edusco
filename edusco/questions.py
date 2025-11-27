@@ -8,4 +8,4 @@ questions = [
      "question":"Işık şiddeti ile fotosentez hızı arasındaki ilişkiyi açıklayınız.",
      "ideal_answer":"Işık şiddeti arttıkça fotosentez hızı artar. Bir noktadan sonra hız sabitlenir. Bunun nedeni klorofilin ışığa tepki kapasitesinin sınırlı olmasıdır.",
      "keywords":["ışık", "şiddet", "fotosentez", "sabit"]},
-
+]
