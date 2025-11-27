@@ -84,7 +84,7 @@ class Edusco:
 
         skor = skor_raw * 2
 
-        if skor >= 0.90:
+        if skor >= 0.85:
             seviye, etiket = 4, "Tam Doğru"
         elif skor >= 0.60:
             seviye, etiket = 3, "Büyük Oranda Doğru"
