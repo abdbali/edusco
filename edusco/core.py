@@ -1,21 +1,26 @@
 from typing import Dict, List
 from difflib import SequenceMatcher
 
+
 class SpellingCorrector:
     def correct(self, text: str) -> str:
         return text.lower()
+
 
 class Tokenizer:
     def tokenize(self, text: str) -> List[str]:
         return text.split()
 
+
 class POSParser:
     def parse(self, tokens: List[str]) -> List[Dict]:
         return [{"text": t, "pos": "noun"} for t in tokens]
-        
+
+
 class MorphologyAnalyzer:
     def analyze(self, token: str) -> Dict:
         return {"text": token, "root": token}
+
 
 class OntologyMatcher:
     def match(self, tokens1: List[Dict], tokens2: List[Dict]) -> List[str]:
@@ -23,9 +28,11 @@ class OntologyMatcher:
         words2 = [t["root"] for t in tokens2]
         return [w for w in words1 if w in words2]
 
+
 class PronounResolver:
     def resolve(self, tokens: List[str]) -> List[str]:
         return tokens
+
 
 class Extractor:
     def extract(self, tokens: List[str]) -> List[Dict]:
@@ -33,13 +40,13 @@ class Extractor:
             return []
         return [{"ozne": tokens[0], "eylem": " ".join(tokens[1:]), "nesne": ""}]
 
+
 class EduscoModel:
     def __init__(self, yanitlar: List[str]):
         self.yanitlar = yanitlar
 
-class Edusco:
-    """Edusco motoru: Yazım düzeltme, anlamsal eşleşme, rubrik puanlama"""
 
+class Edusco:
     def __init__(self):
         self.spell = SpellingCorrector()
         self.tokenizer = Tokenizer()
@@ -60,29 +67,22 @@ class Edusco:
         return sum(skorlar) / len(skorlar) if skorlar else 0
 
     def değerlendir(self, model: EduscoModel, cevap: str) -> Dict:
-
         duzeltmis = self.spell.correct(cevap)
-
         tokens = self.tokenizer.tokenize(duzeltmis)
-
         tokens = self.pronoun_resolver.resolve(tokens)
-
         parsed = self.parser.parse(tokens)
         morph_tokens = [self.morph.analyze(t) for t in tokens]
-
         relations = self.extractor.extract(tokens)
 
         model_tokens = self.tokenizer.tokenize(" ".join(model.yanitlar))
         model_tokens_morph = [self.morph.analyze(t) for t in model_tokens]
 
-
         ortak = self.ontology.match(morph_tokens, model_tokens_morph)
-
         sem_score = self.semantik_skor(cevap, " ".join(model.yanitlar))
 
         skor_raw = (len(ortak) / len(model_tokens) * 0.4 + sem_score * 0.6) if model_tokens else sem_score
 
-        skor = min(1.0, skor_raw * 2)
+        skor = skor_raw * 2
 
         if skor >= 0.90:
             seviye, etiket = 4, "Tam Doğru"
