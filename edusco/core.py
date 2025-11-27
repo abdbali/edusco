@@ -182,13 +182,13 @@ class Edusco:
         skor = (len(ortak)/len(model_tokens) * 0.4 + sem_score * 0.6) if model_tokens else sem_score
 
         # 9. Rubrik seviyesi (senin verdiğin revize eşikler)
-        if skor >= 0.49:
+        if skor >= 0.45:
             seviye, etiket = 4, "Tam Doğru"
-        elif skor >= 0.35:
+        elif skor >= 0.30:
             seviye, etiket = 3, "Büyük Oranda Doğru"
-        elif skor >= 0.25:
+        elif skor >= 0.20:
             seviye, etiket = 2, "Kısmen Doğru"
-        elif skor >= 0.15:
+        elif skor >= 0.13:
             seviye, etiket = 1, "Yüzeysel Doğru"
         else:
             seviye, etiket = 0, "Yanlış"
