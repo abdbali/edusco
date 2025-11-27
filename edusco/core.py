@@ -86,9 +86,9 @@ class Edusco:
 
         if skor >= 0.90:
             seviye, etiket = 4, "Tam Doğru"
-        elif skor >= 0.70:
+        elif skor >= 0.60:
             seviye, etiket = 3, "Büyük Oranda Doğru"
-        elif skor >= 0.52:
+        elif skor >= 0.35:
             seviye, etiket = 2, "Kısmen Doğru"
         elif skor >= 0.20:
             seviye, etiket = 1, "Yüzeysel Doğru"
