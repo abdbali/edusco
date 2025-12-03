@@ -61,6 +61,8 @@ EQUIVALENCES = {
         "fotosentez sırasında oksijen açığa çıkması",
         "bitkilerde glikoz depolama",
         "enerji üretimi ve besin döngüsü"
+        #Sınırlayıcılar
+        "miktar..." 
     ]
 }
 
